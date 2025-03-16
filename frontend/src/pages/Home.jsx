@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import home from "../images/home.webp";
+import home from "../images/home.webp"
 import { FaLightbulb, FaVideo, FaBook, FaProjectDiagram, FaUsers } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import AOS from 'aos';
