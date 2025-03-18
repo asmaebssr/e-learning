@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Heart, MessageCircle, Trash2, Edit, Grid, List } from 'lucide-react';
 import { CommentsSection } from "../../components/CommentSystem";
 import { useSelector } from 'react-redux';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Blog = () => {
   const [posts, setPosts] = useState([]);
@@ -14,6 +14,8 @@ const Blog = () => {
   const [editingPost, setEditingPost] = useState(null);
   const [editForm, setEditForm] = useState({ title: '', text: '' });
   const [viewMode, setViewMode] = useState('list'); // 'grid' or 'list'
+  const [confirmDelete, setConfirmDelete] = useState(null); // State for deletion confirmation
+  const [deleteInProgress, setDeleteInProgress] = useState(null); // State for deletion loading
 
   const { user, isAuthenticated } = useSelector(state => state.auth);
   const navigate = useNavigate();
@@ -60,12 +62,17 @@ const Blog = () => {
     }
   };
 
-  const handleDeletePost = async (postId) => {
-    if (!window.confirm('Are you sure you want to delete this post?')) {
-      return;
-    }
+  const initiateDeletePost = (postId) => {
+    setConfirmDelete(postId); // Set confirmation for post deletion
+  };
 
+  const cancelDelete = () => {
+    setConfirmDelete(null); // Cancel deletion
+  };
+
+  const handleDeletePost = async (postId) => {
     try {
+      setDeleteInProgress(postId); // Set loading state for post deletion
       await axios.delete(`http://localhost:5000/api/posts/${postId}`, {
         withCredentials: true
       });
@@ -74,6 +81,9 @@ const Blog = () => {
     } catch (err) {
       console.error('Error deleting post:', err);
       alert(err.response?.data?.msg || 'Failed to delete post');
+    } finally {
+      setDeleteInProgress(null); // Reset loading state
+      setConfirmDelete(null); // Reset confirmation
     }
   };
 
@@ -243,7 +253,7 @@ const Blog = () => {
                       <Edit className="w-5 h-5" />
                     </button>
                     <button
-                      onClick={() => handleDeletePost(post._id)}
+                      onClick={() => initiateDeletePost(post._id)}
                       className="flex items-center space-x-1 hover:text-red-500"
                     >
                       <Trash2 className="w-5 h-5" />
@@ -257,7 +267,7 @@ const Blog = () => {
 
         {expandedPost === post._id && !isEditing && (
           <div className="w-full">
-            <CommentsSection postId={post._id} />
+            <CommentsSection postId={post._id} onCommentSubmit={() => setExpandedPost(null)} />
           </div>
         )}
       </motion.div>
@@ -317,7 +327,9 @@ const Blog = () => {
           viewMode === 'grid' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {posts.map(post => (
-                <div key={post._id}>{renderPost(post)}</div>
+                <div key={post._id} className="flex flex-col">
+                  {renderPost(post)}
+                </div>
               ))}
             </div>
           ) : (
@@ -326,6 +338,68 @@ const Blog = () => {
             </div>
           )
         )}
+
+        {/* Confirmation Modal */}
+        <AnimatePresence>
+          {confirmDelete && (
+            <>
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
+                onClick={cancelDelete}
+              ></motion.div>
+              <div className="fixed inset-0 flex items-center justify-center z-50">
+                <motion.div 
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.9, opacity: 0 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  className="bg-white rounded-lg p-6 max-w-md shadow-xl"
+                >
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Confirm Deletion</h3>
+                  <p className="text-gray-600 mb-6">
+                    Are you sure you want to delete this post? This action cannot be undone.
+                  </p>
+                  <div className="flex justify-end gap-4">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={cancelDelete}
+                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 transition-colors"
+                    >
+                      Cancel
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleDeletePost(confirmDelete)}
+                      disabled={deleteInProgress === confirmDelete}
+                      className={`px-4 py-2 rounded-md text-white transition-colors ${
+                        deleteInProgress === confirmDelete
+                          ? "bg-purple-400 cursor-not-allowed"
+                          : "bg-purple-600 hover:bg-purple-700"
+                      }`}
+                    >
+                      {deleteInProgress === confirmDelete ? (
+                        <div className="flex items-center gap-2">
+                          <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Deleting...
+                        </div>
+                      ) : (
+                        "Delete"
+                      )}
+                    </motion.button>
+                  </div>
+                </motion.div>
+              </div>
+            </>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

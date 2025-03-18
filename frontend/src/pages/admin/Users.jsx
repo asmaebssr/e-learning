@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
 import { Trash2, AlertCircle, X, Check, User, Mail, ShieldCheck, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -10,6 +11,7 @@ const Users = () => {
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [deleteInProgress, setDeleteInProgress] = useState(null);
   const [updatingAdminStatus, setUpdatingAdminStatus] = useState(null); // Track admin status updates
+  const [confirmToggleAdmin, setConfirmToggleAdmin] = useState(null); // State for admin toggle confirmation
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -60,7 +62,14 @@ const Users = () => {
     }
   };
 
-  // Toggle admin status
+  const initiateToggleAdmin = (userId, currentStatus) => {
+    setConfirmToggleAdmin({ userId, currentStatus }); // Set confirmation for admin toggle
+  };
+
+  const cancelToggleAdmin = () => {
+    setConfirmToggleAdmin(null); // Cancel admin toggle
+  };
+
   const toggleAdminStatus = async (userId, currentStatus) => {
     try {
       setUpdatingAdminStatus(userId); // Set loading state for the specific user
@@ -81,6 +90,7 @@ const Users = () => {
       setError('Failed to update admin status. Please try again.');
     } finally {
       setUpdatingAdminStatus(null); // Reset loading state
+      setConfirmToggleAdmin(null); // Reset confirmation
     }
   };
 
@@ -121,36 +131,94 @@ const Users = () => {
           </div>
         )}
 
-        {confirmDelete && (
-          <>
-            <div className="fixed inset-0 bg-white/50 backdrop-blur-sm z-40"></div>
-            <div className="fixed inset-0 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg p-6 max-w-md shadow-xl">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">Confirm User Deletion</h3>
-                <p className="text-gray-600 mb-6">Are you sure you want to delete this user? This action cannot be undone.</p>
-                <div className="flex justify-end gap-4">
-                  <button
-                    onClick={cancelDelete}
-                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={() => handleDelete(confirmDelete)}
-                    disabled={deleteInProgress === confirmDelete}
-                    className={`px-4 py-2 rounded-md text-white transition-colors ${
-                      deleteInProgress === confirmDelete
-                        ? "bg-purple-400 cursor-not-allowed"
-                        : "bg-purple-600 hover:bg-purple-700"
-                    }`}
-                  >
-                    {deleteInProgress === confirmDelete ? "Deleting..." : "Delete"}
-                  </button>
+        {/* Delete Confirmation Modal */}
+        <AnimatePresence>
+          {confirmDelete && (
+            <>
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-white/50 backdrop-blur-sm z-40"
+                onClick={cancelDelete}
+              ></motion.div>
+              <div className="fixed inset-0 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg p-6 max-w-md shadow-xl">
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Confirm User Deletion</h3>
+                  <p className="text-gray-600 mb-6">Are you sure you want to delete this user? This action cannot be undone.</p>
+                  <div className="flex justify-end gap-4">
+                    <button
+                      onClick={cancelDelete}
+                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => handleDelete(confirmDelete)}
+                      disabled={deleteInProgress === confirmDelete}
+                      className={`px-4 py-2 rounded-md text-white transition-colors ${
+                        deleteInProgress === confirmDelete
+                          ? "bg-purple-400 cursor-not-allowed"
+                          : "bg-purple-600 hover:bg-purple-700"
+                      }`}
+                    >
+                      {deleteInProgress === confirmDelete ? "Deleting..." : "Delete"}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </>
-        )}
+            </>
+          )}
+        </AnimatePresence>
+
+        {/* Admin Toggle Confirmation Modal */}
+        <AnimatePresence>
+          {confirmToggleAdmin && (
+            <>
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-white/50 backdrop-blur-sm z-40"
+                onClick={cancelToggleAdmin}
+              ></motion.div>
+              <div className="fixed inset-0 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg p-6 max-w-md shadow-xl">
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Confirm Admin Status Change</h3>
+                  <p className="text-gray-600 mb-6">
+                    Are you sure you want to {confirmToggleAdmin.currentStatus ? "revoke" : "grant"} admin privileges for this user?
+                  </p>
+                  <div className="flex justify-end gap-4">
+                    <button
+                      onClick={cancelToggleAdmin}
+                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => toggleAdminStatus(confirmToggleAdmin.userId, confirmToggleAdmin.currentStatus)}
+                      disabled={updatingAdminStatus === confirmToggleAdmin.userId}
+                      className={`px-4 py-2 rounded-md text-white transition-colors ${
+                        updatingAdminStatus === confirmToggleAdmin.userId
+                          ? "bg-purple-400 cursor-not-allowed"
+                          : "bg-purple-600 hover:bg-purple-700"
+                      }`}
+                    >
+                      {updatingAdminStatus === confirmToggleAdmin.userId ? (
+                        <div className="flex items-center gap-2">
+                          <Loader2 className="animate-spin h-4 w-4" />
+                          Updating...
+                        </div>
+                      ) : (
+                        confirmToggleAdmin.currentStatus ? "Revoke Admin" : "Grant Admin"
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </AnimatePresence>
 
         {users.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-lg shadow border border-indigo-100">
@@ -201,7 +269,7 @@ const Users = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <button
-                          onClick={() => toggleAdminStatus(user._id, user.isAdmin)}
+                          onClick={() => initiateToggleAdmin(user._id, user.isAdmin)}
                           disabled={updatingAdminStatus === user._id}
                           className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                             user.isAdmin

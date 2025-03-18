@@ -32,6 +32,7 @@ import AllPosts from './pages/admin/AllPosts';
 import CreateCommunity from './pages/admin/CreateCommunity';
 import ManageParticipants from './pages/admin/ManageParticipants';
 import AllCommunities from './pages/admin/AllCommunities';
+import About from './pages/user/About';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -120,6 +121,7 @@ const App = () => {
         ? <Contact /> 
         : <Navigate to="/login" />
     } />
+    <Route path="/about" element={<About /> } />
 
     <Route path="/manage-posts" element={
       isAuthenticated && isAdmin ? <ManagePosts /> : <Navigate to="/login" />
@@ -148,6 +150,7 @@ const App = () => {
    <Route path="/admin/communities/all" element={
       isAuthenticated && isAdmin ? <AllCommunities /> : <Navigate to="/login" />
   } />
+ 
   </Routes>
   
 

@@ -260,9 +260,9 @@ router.delete('/:id', authenticate, async (req, res) => {
       return res.status(401).json({ msg: 'User not authorized' });
     }
 
-    if (req.user.isAdmin == false) {
-      return res.status(401).json({ msg: 'Ur not an admin' });
-    }
+    // if (req.user.isAdmin == false) {
+    //   return res.status(401).json({ msg: 'Ur not an admin' });
+    // }
     
     await post.deleteOne();
     res.json({ msg: 'Post removed' });

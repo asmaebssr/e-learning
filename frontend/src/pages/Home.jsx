@@ -7,8 +7,34 @@ import 'aos/dist/aos.css';
 import Typewriter from 'typewriter-effect';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
+import { useSelector } from 'react-redux';
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+
+  const user = useSelector(state => state.auth.user?.user);
+  console.log(user)
+
+  const navigate = useNavigate()
+
+  const handleStart = () => {
+    if (!user) {
+      navigate('/login')
+    } else if(user.isAdmin === true)
+    {
+      navigate('/admin')
+    }
+    navigate('/dashboard')
+  }
+
+  const handlePathsBtn = () => {
+    if (!user) {
+      navigate('/login')
+    } 
+    navigate('/learning-paths')
+   
+  }
+
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -143,24 +169,27 @@ const Home = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <span className="relative z-10">Get Started Now</span>
+                <span onClick={() => handleStart()} className="relative z-10">Get Started Now</span>
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 opacity-0 group-hover:opacity-100"
                   transition={{ duration: 0.3 }}
                 />
               </motion.button>
 
-              <motion.button
+              {
+                !user?.isAdmin ? <motion.button
                 className="group relative overflow-hidden bg-white text-indigo-700 border-2 border-indigo-200 px-8 py-4 rounded-xl font-medium shadow-md"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <span className="relative z-10">Explore Learning Paths</span>
+                <span onClick={() => handlePathsBtn()} className="relative z-10">Explore Learning Paths</span>
                 <motion.div
                   className="absolute inset-0 bg-indigo-50 opacity-0 group-hover:opacity-100"
                   transition={{ duration: 0.3 }}
                 />
-              </motion.button>
+              </motion.button> : <span></span>
+              
+              }
             </motion.div>
           </motion.div>
 

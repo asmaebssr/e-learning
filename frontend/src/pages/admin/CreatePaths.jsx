@@ -358,7 +358,7 @@ const CreatePaths = () => {
           <div className="mt-6 bg-white p-6 rounded-lg shadow">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold">
-                Resources for {learningPath?.technologies[activeTechIndex].name}
+                Resources for {learningPath?.technologies[activeTechIndex]?.name}
               </h2>
               {!isAddingResource && (
                 <button

@@ -8,6 +8,7 @@ const AllPosts = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [username, setUsername] = useState("")
   const [deleteModal, setDeleteModal] = useState({
     show: false,
     type: null, // 'post', 'comment', or 'reply'
@@ -22,6 +23,7 @@ const AllPosts = () => {
       const res = await axios.get('http://localhost:5000/api/posts', {
         withCredentials: true,
       });
+      setUsername(res.data[0].user.username)
       setPosts(res.data);
       setLoading(false);
     } catch (err) {
@@ -181,9 +183,12 @@ const AllPosts = () => {
                   )}
                   
                   <p className="text-gray-700 mb-6 leading-relaxed">{post.text}</p>
-                  
+
                   <div className="flex items-center space-x-4 text-sm text-gray-500 mb-6">
+                  <p>Thid post is posted by <span className="text-red-500">{username}</span></p>
+
                     <div className="flex items-center space-x-2 bg-purple-50 px-3 py-1 rounded-full">
+
                       <Heart className="w-4 h-4 text-purple-500" />
                       <span className="font-medium">{post.likes.length}</span>
                     </div>
