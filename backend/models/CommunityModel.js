@@ -29,5 +29,5 @@ const SubcategorySchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-const Subcategory = mongoose.model('Subcategory', SubcategorySchema);
+const Subcategory = mongoose.model('Community', SubcategorySchema);
 export default Subcategory;

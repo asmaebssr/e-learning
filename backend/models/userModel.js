@@ -20,10 +20,6 @@ const userSchema = mongoose.Schema(
             required: true,
             default: false
         },
-        enrolledPaths: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'LearningPath',
-        }],
         resetPasswordToken : String,
         resetPasswordExpiresAt : Date,
     },

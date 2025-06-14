@@ -13,6 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@tsparticles/interaction-external-remove": "^3.8.1",
     "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -28,8 +29,7 @@
     "nodemailer": "^6.10.0",
     "nodemon": "^3.1.9",
     "path": "^0.12.7",
-    "react-hot-toast": "^2.5.2",
-    "react-toastify": "^11.0.5",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "typewriter-effect": "^2.22.0"
   }
 }

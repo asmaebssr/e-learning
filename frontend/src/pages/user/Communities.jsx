@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { ArrowLeft, Users, MessageSquare } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Picker from '@emoji-mart/react';
+import data from '@emoji-mart/data';
 
 const Communities = () => {
   const [messages, setMessages] = useState([]);
@@ -16,9 +18,11 @@ const Communities = () => {
   const [joinLoading, setJoinLoading] = useState(false);
   const [subcategoryInfo, setSubcategoryInfo] = useState(null);
   const [showMembersMobile, setShowMembersMobile] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const { subcategory } = useParams();
   const socketRef = useRef();
   const messagesEndRef = useRef();
+  const emojiPickerRef = useRef();
   const user = useSelector(state => state.auth.user.user);
 
   useEffect(() => {
@@ -37,7 +41,7 @@ const Communities = () => {
     const fetchMessages = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/communities/${subcategory}/messages`,
-            {withCredentials: true}
+          { withCredentials: true }
         );
         setMessages(response.data.messages || []);
       } catch (error) {
@@ -112,6 +116,25 @@ const Communities = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Close emoji picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleEmojiSelect = (emoji) => {
+    setMessage(prev => prev + emoji.native);
+    setShowEmojiPicker(false);
+  };
+
   const handleJoinCommunity = async () => {
     if (!user) return;
     
@@ -183,6 +206,16 @@ const Communities = () => {
     }
   };
 
+  // Check if user is online
+  const isUserOnline = (userId) => {
+    return onlineUsers.some(onlineUser => onlineUser._id === userId);
+  };
+
+  // Mobile members sidebar toggler
+  const toggleMembersSidebar = () => {
+    setShowMembersMobile(!showMembersMobile);
+  };
+
   // Loading state with gradient background
   if (loading) {
     return (
@@ -194,16 +227,6 @@ const Communities = () => {
       </div>
     );
   }
-
-  // Check if user is online
-  const isUserOnline = (userId) => {
-    return onlineUsers.some(onlineUser => onlineUser._id === userId);
-  };
-
-  // Mobile members sidebar toggler
-  const toggleMembersSidebar = () => {
-    setShowMembersMobile(!showMembersMobile);
-  };
 
   return (
     <div className="flex flex-col h-screen max-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50">
@@ -397,8 +420,17 @@ const Communities = () => {
           </div>
           
           {/* Message Input */}
-          <form onSubmit={handleSubmit} className="border-t p-4 bg-white">
+          <form onSubmit={handleSubmit} className="border-t p-4 bg-white relative">
             <div className="flex rounded-lg shadow-md overflow-hidden">
+              <button 
+                type="button" 
+                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                className="px-3 bg-gray-100 hover:bg-gray-200 transition-colors"
+                disabled={!isMember}
+              >
+                😊
+              </button>
+              
               <input
                 type="text"
                 value={message}
@@ -419,6 +451,17 @@ const Communities = () => {
                 Send
               </button>
             </div>
+            
+            {showEmojiPicker && (
+              <div ref={emojiPickerRef} className="absolute bottom-20 left-4 z-10">
+                <Picker 
+                  data={data} 
+                  onEmojiSelect={handleEmojiSelect}
+                  theme="light"
+                />
+              </div>
+            )}
+            
             {!isMember && user && (
               <p className="text-center mt-2 text-sm text-indigo-500">
                 <button 

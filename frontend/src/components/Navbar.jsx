@@ -114,7 +114,7 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center">
-              <span className="ml-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-800 to-purple-700 font-bold text-xl">CodeLearn</span>
+              <span className="ml-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-800 to-purple-700 font-bold text-xl">NeoLearn</span>
             </Link>
           </div>
 

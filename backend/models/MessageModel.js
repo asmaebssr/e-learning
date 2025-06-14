@@ -17,7 +17,6 @@ const MessageSchema = new mongoose.Schema({
   subcategory: {
     type: String,
     required: true,
-    enum: ["frontend", "backend", "fullstack", "ui", "ux"],
   },
   createdAt: {
     type: Date,

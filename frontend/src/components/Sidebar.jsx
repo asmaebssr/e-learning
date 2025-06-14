@@ -18,7 +18,7 @@ const Sidebar = () => {
     { path: '/resources', title: 'Resources', icon: <FileText size={20} /> },
     { path: '/challenges', title: 'Challenges', icon: <Zap size={20} /> },
     { path: '/communities', title: 'Communities', icon: <Users size={20} /> },
-    { path: '/achievements', title: 'Achievements', icon: <Award size={20} /> },
+    // { path: '/achievements', title: 'Achievements', icon: <Award size={20} /> },
   ];
 
   return (
