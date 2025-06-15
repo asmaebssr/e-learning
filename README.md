@@ -23,24 +23,22 @@ NeoLearn est une plateforme d’e-learning innovante développée avec le **MERN
 
 ## ✅ Pour commencer
 
-### 1. Cloner le repo
+### 1. Cloner le dépôt
 
 ```bash
 git clone https://github.com/ton-utilisateur/e-learning.git
 cd e-learning
 
-2. Installer les dépendances
 npm install
 
 cd frontend
 npm install
 
-3. Lancer l’application
-Frontend :
+# Lancer le frontend
 npm run frontend
-Backend:
-npm run backend
 
+# Lancer le backend
+npm run backend
 
 
 👤 Auteur
