@@ -45,7 +45,8 @@ npm run backend
 ```
 
 
-👤 Auteur
-Asmae Bessar – Développeuse Full Stack
+👩‍💻 Auteur
 
-Ce projet a été réalisé dans le cadre de ma formation à l'OFPPT - ISTA Cité de l’Air, El Jadida.
+**Asmae Bessar** – Développeuse Full Stack 💻✨  
+🎓 Projet réalisé dans le cadre de ma formation à l’**OFPPT – ISTA Cité de l’Air, El Jadida** 📍
+
