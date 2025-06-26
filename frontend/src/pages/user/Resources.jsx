@@ -4,6 +4,7 @@ import Sidebar from "../../components/Sidebar";
 import { Link } from "react-router-dom";
 import { Search, BookOpen, Video, FileText, Filter, X } from "lucide-react";
 import { motion } from "framer-motion";
+import ResourcesChatbot from "../../components/ResourcesChatbot";
 
 const Resources = () => {
   const [learningPaths, setLearningPaths] = useState([]);
@@ -478,6 +479,9 @@ const Resources = () => {
           )}
         </motion.div>
       </div>
+      
+      {/* Integrated Chatbot - Fixed position in bottom right */}
+      <ResourcesChatbot learningPaths={learningPaths} />
     </div>
   );
 };
