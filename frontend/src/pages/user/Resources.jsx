@@ -481,7 +481,7 @@ const Resources = () => {
       </div>
       
       {/* Integrated Chatbot - Fixed position in bottom right */}
-      <ResourcesChatbot learningPaths={learningPaths} />
+      {/* <ResourcesChatbot learningPaths={learningPaths} /> */}
     </div>
   );
 };
