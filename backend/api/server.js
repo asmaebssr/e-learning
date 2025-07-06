@@ -9,15 +9,15 @@ import path from 'path';
 
 
 // Import routes
-import userRoutes from './routes/userRoutes.js';
-import postRoutes from './routes/postRoutes.js';
-import communityRoutes from './routes/communityRoutes.js';
-import learningPathsRoutes from './routes/learningPathsRoutes.js'
+import userRoutes from '../routes/userRoutes.js';
+import postRoutes from '../routes/postRoutes.js';
+import communityRoutes from '../routes/communityRoutes.js';
+import learningPathsRoutes from '../routes/learningPathsRoutes.js'
 
 // Load environment variables
 dotenv.config();
 
-import Message from './models/MessageModel.js';
+import Message from '../models/MessageModel.js';
 
 // Initialize the connectedUsers map and export it
 export const connectedUsers = new Map();
@@ -47,7 +47,7 @@ const io = new Server(server, {
 });
 
 // Connect to MongoDB
-import connectDB from './config/db.js';
+import connectDB from '../config/db.js';
 connectDB();
 
 // Configure multer to preserve file extensions

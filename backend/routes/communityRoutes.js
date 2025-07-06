@@ -2,7 +2,7 @@ import express from 'express';
 import Subcategory from '../models/CommunityModel.js';
 import Message from '../models/MessageModel.js';
 import { authenticate } from '../middlewares/authMiddleware.js';
-import { connectedUsers } from '../server.js';
+import { connectedUsers } from '../api/server.js';
 import upload from '../middlewares/uploadConfig.js';
 
 const router = express.Router();
